@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Scales</title>
+<style media="screen">
+	table {
+		width: 30%;
+		margin-left: auto;
+		margin-right: auto;
+		font-size: 2rem;
+		table-layout: fixed;
+	}
+	td {
+		text-align: center;
+		padding: 0.25rem;
+	}
+</style>
+</head>
+<body>
+	<div style="width:30%;margin-left:auto;margin-right:auto;">
+		<select id="note" onchange="listnotes()" style="width:50%;">
+			<option value="c♭">C♭</option>
+			<option value="c">C</option>
+			<option value="c♯">C♯</option>
+			<option value="d♭">D♭</option>
+			<option value="d">D</option>
+			<option value="d♯">D♯</option>
+			<option value="e♭">E♭</option>
+			<option value="e">E</option>
+			<option value="e♯">E♯</option>
+			<option value="f♭">F♭</option>
+			<option value="f">F</option>
+			<option value="f♯">F♯</option>
+			<option value="g♭">G♭</option>
+			<option value="g">G</option>
+			<option value="g♯">G♯</option>
+			<option value="a♭">A♭</option>
+			<option value="a">A</option>
+			<option value="a♯">A♯</option>
+			<option value="h♭">B</option>
+			<option value="h">H</option>
+			<option value="h♯">H♯</option>
+		</select>
+		<select id="gesch" onchange="listnotes()">
+			<option value="dur">Dur</option>
+			<option value="moll">Moll</option>
+			<!--<option value="chrom">Chrom</option>-->
+		</select>
+	</div>
+	<table>
+		<thead>
+			<tr>
+				<th>I</th>
+				<th>II</th>
+				<th>III</th>
+				<th>IV</th>
+				<th>V</th>
+				<th>VI</th>
+				<th>VII</th>
+				<th>(I)</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+		</tbody>
+	</table>
+<script>
+(()=>{listnotes()})()
+function listnotes() {
+	const gesch = document.getElementById("gesch").value || "dur"
+	let start = document.getElementById("note").value || "c"
+	const noten = [
+		["c",2],//ces=3, c=2, cis=1
+		["d",2],
+		["e",1],
+		["f",2],
+		["g",2],
+		["a",2],
+		["h",1]
+	]
+	const dur = [2,2,1,2,2,2,1]
+	const moll = [2,1,2,2,1,2,2]
+	const chrom = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+
+	let result = []
+
+	let geschlecht = moll, index = 0, diff = 0, indexSave = 0, diffSave = 0, startSave = start
+	if (gesch === "dur") {
+		geschlecht = dur
+	} else if (gesch === "moll") {
+		geschlecht = moll
+	} else if (gesch === "chrom") {
+		geschlecht = chrom
+	}
+
+	if (start.substring(1,2) === "♯") {
+		diff = 1
+		start = start.substring(0, 1)
+	}
+	if (start.substring(1,2) === "♭") {
+		diff = -1
+		start = start.substring(0, 1)
+	}
+
+	for (let i = 0; i < noten.length; i++) {
+		if (noten[i][0] === start) {
+			index = i
+			break
+		}
+	}
+
+	indexSave = index
+	diffSave = diff
+
+	result.push(startSave)
+
+	for (let i = 0; i < geschlecht.length; i++) {
+		diff += geschlecht[i] - getNoteLen(index)
+		index++
+		if (diff > 0) {
+			if (diff > 1) {
+				result.push(getNoteName(index) + "𝄪")
+			} else {
+				result.push(getNoteName(index) + "♯")
+			}
+		} else if (diff < 0) {
+			if (diff < -1) {
+				result.push(getNoteName(index) + "♭♭")
+			} else {
+				if (getNoteName(index) === "h") {
+					result.push("b")
+				} else {
+					result.push(getNoteName(index) + "♭")
+				}
+			}
+		} else {
+			result.push(getNoteName(index))
+		}
+	}
+
+	index = indexSave
+	diff = diffSave
+
+	result.push(startSave)
+
+	for (let i = 0; i < geschlecht.length; i++) {
+		diff += geschlecht[i] - getNoteLen(index)
+		index++
+
+		let resultTemp = ""
+		if (diff > 0) {
+			resultTemp += getNoteName(index)
+			if (diff > 1) {
+				resultTemp += "𝄪"
+			} else {
+				resultTemp += "♯"
+			}
+			if (diff === 1 && getNoteLen(index) === 1 || diff > 1 && getNoteLen(index) === 2) {
+				resultTemp = getNoteName(index + 1)
+			}
+		} else if (diff < 0) {
+			resultTemp += getNoteName(index) + "♭"
+			if (diff < -1) {
+				resultTemp += "♭"
+			}
+			if (diff === -1 && getNoteLen(index - 1) === 1 || diff < -1 && getNoteLen(index - 1) === 2) {
+				resultTemp = getNoteName(index - 1)
+			}
+			if (resultTemp === "h♭") {
+				resultTemp = "b"
+			}
+		} else {
+			resultTemp += getNoteName(index)
+		}
+
+		result.push(resultTemp)
+	}
+
+	let i = 0
+	Array.from(document.getElementsByTagName("TD")).forEach(tag => {
+		tag.textContent = result[i++]
+	})
+	function getNoteName(index) {
+		return noten[index % 7][0]
+	}
+	function getNoteLen(index) {
+		return noten[index % 7][1]
+	}
+}
+</script>
+</body>
+</html>
