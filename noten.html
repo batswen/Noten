@@ -4,22 +4,33 @@
 <meta charset="utf-8">
 <title>Scales</title>
 <style media="screen">
+    body {
+        box-sizing: border-box;
+    }
+    select, button, table {
+        font-size: 1.5rem;
+    }
 	table {
 		width: 30%;
 		margin-left: auto;
 		margin-right: auto;
-		font-size: 2rem;
 		table-layout: fixed;
 	}
 	td {
 		text-align: center;
 		padding: 0.25rem;
 	}
+    .flex {
+        display: flex;
+    }
+    .flex-1 {
+        flex: 100%;
+    }
 </style>
 </head>
 <body>
-	<div style="width:30%;margin-left:auto;margin-right:auto;">
-		<select id="note" onchange="listnotes()" style="width:50%;">
+	<div class="flex" style="width:30%;margin-left:auto;margin-right:auto;">
+		<select id="note" class="flex-1" onchange="listnotes()" style="width:50%;">
 			<option value="c♭">C♭</option>
 			<option value="c">C</option>
 			<option value="c♯">C♯</option>
@@ -42,13 +53,17 @@
 			<option value="h">H</option>
 			<option value="h♯">H♯</option>
 		</select>
-		<select id="gesch" onchange="listnotes()">
+		<select id="gesch" class="flex-1" onchange="listnotes()" style="width:49%;">
 			<option value="dur">Dur</option>
 			<option value="moll">Moll</option>
 			<!--<option value="chrom">Chrom</option>-->
 		</select>
 	</div>
-	<table>
+    <div class="flex" style="width:30%;margin-left:auto;margin-right:auto;">
+		<button onclick="zufi()" class="flex-1">Zufall</button>
+		<button onclick="lösung()" class="flex-1">Lösung zeigen</button>
+	</div>
+	<table id="table">
 		<thead>
 			<tr>
 				<th>I</th>
@@ -86,6 +101,16 @@
 	</table>
 <script>
 (()=>{listnotes()})()
+function zufi() {
+    document.getElementById("table").style.display="none"
+
+    const NOTE = document.getElementById("note")
+    document.querySelector("option[value='" + NOTE[Math.floor(Math.random() * NOTE.length)].value + "']").setAttribute("selected", true)
+    listnotes()
+}
+function lösung() {
+    document.getElementById("table").style.display=""
+}
 function listnotes() {
 	const gesch = document.getElementById("gesch").value || "dur"
 	let start = document.getElementById("note").value || "c"
@@ -147,11 +172,7 @@ function listnotes() {
 			if (diff < -1) {
 				result.push(getNoteName(index) + "♭♭")
 			} else {
-				if (getNoteName(index) === "h") {
-					result.push("b")
-				} else {
-					result.push(getNoteName(index) + "♭")
-				}
+                result.push(getNoteName(index) + "♭")
 			}
 		} else {
 			result.push(getNoteName(index))
@@ -186,15 +207,15 @@ function listnotes() {
 			if (diff === -1 && getNoteLen(index - 1) === 1 || diff < -1 && getNoteLen(index - 1) === 2) {
 				resultTemp = getNoteName(index - 1)
 			}
-			if (resultTemp === "h♭") {
-				resultTemp = "b"
-			}
 		} else {
 			resultTemp += getNoteName(index)
 		}
 
 		result.push(resultTemp)
 	}
+console.log(result.map(e => e === "h♭" ? "b" : e))
+
+    result = result.map(e => e === "h♭" ? "b" : e)
 
 	let i = 0
 	Array.from(document.getElementsByTagName("TD")).forEach(tag => {
