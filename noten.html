@@ -29,7 +29,7 @@
 </style>
 </head>
 <body>
-	<div class="flex" style="width:30%;margin-left:auto;margin-right:auto;">
+	<div class="flex" style="width:50%;margin-left:auto;margin-right:auto;">
 		<select id="note" class="flex-1" onchange="listnotes()" style="width:50%;">
 			<option value="c♭">C♭</option>
 			<option value="c">C</option>
@@ -59,7 +59,7 @@
 			<!--<option value="chrom">Chrom</option>-->
 		</select>
 	</div>
-    <div class="flex" style="width:30%;margin-left:auto;margin-right:auto;">
+    <div class="flex" style="width:50%;margin-left:auto;margin-right:auto;">
 		<button onclick="zufi()" class="flex-1">Zufall</button>
 		<button onclick="lösung()" class="flex-1">Lösung zeigen</button>
 	</div>
@@ -103,9 +103,14 @@
 (()=>{listnotes()})()
 function zufi() {
     document.getElementById("table").style.display="none"
+    let select = document.getElementById("note")
+    let items = select.getElementsByTagName("option")
+    select.selectedIndex = Math.floor(Math.random() * items.length)
 
-    const NOTE = document.getElementById("note")
-    document.querySelector("option[value='" + NOTE[Math.floor(Math.random() * NOTE.length)].value + "']").setAttribute("selected", true)
+    select = document.getElementById("gesch")
+    items = select.getElementsByTagName("option")
+    select.selectedIndex = Math.floor(Math.random() * items.length)
+
     listnotes()
 }
 function lösung() {
