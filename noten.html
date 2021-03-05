@@ -11,26 +11,37 @@
         font-size: 1.5rem;
     }
 	table {
-		width: 30%;
+		width: 50%;
 		margin-left: auto;
 		margin-right: auto;
 		table-layout: fixed;
+		margin-top: 0.5rem;
+		border: 1px solid #333;
+	}
+	th {
+		border-bottom: 1px solid #555;
 	}
 	td {
 		text-align: center;
 		padding: 0.25rem;
 	}
+    .wichtig {
+        background-color: #eee;
+    }
     .flex {
         display: flex;
     }
     .flex-1 {
         flex: 100%;
     }
+    .gap {
+        gap: 0.1rem;
+    }
 </style>
 </head>
 <body>
-	<div class="flex" style="width:50%;margin-left:auto;margin-right:auto;">
-		<select id="note" class="flex-1" onchange="listnotes()" style="width:50%;">
+	<div class="flex gap" style="width:50%;margin-left:auto;margin-right:auto;">
+		<select id="note" class="flex-1" onchange="listnotes()">
 			<option value="c♭">C♭</option>
 			<option value="c">C</option>
 			<option value="c♯">C♯</option>
@@ -53,55 +64,69 @@
 			<option value="h">H</option>
 			<option value="h♯">H♯</option>
 		</select>
-		<select id="gesch" class="flex-1" onchange="listnotes()" style="width:49%;">
+		<select id="gesch" class="flex-1" onchange="listnotes()">
 			<option value="dur">Dur</option>
 			<option value="moll">Moll</option>
 			<!--<option value="chrom">Chrom</option>-->
 		</select>
 	</div>
-    <div class="flex" style="width:50%;margin-left:auto;margin-right:auto;">
+    <div class="flex gap" style="width:50%;margin-left:auto;margin-right:auto;">
 		<button onclick="zufi()" class="flex-1">Zufall</button>
-		<button onclick="lösung()" class="flex-1">Lösung zeigen</button>
+		<button id="button-lösung" onclick="lösung()" class="flex-1">Lösung zeigen</button>
 	</div>
-	<table id="table">
-		<thead>
-			<tr>
-				<th>I</th>
-				<th>II</th>
-				<th>III</th>
-				<th>IV</th>
-				<th>V</th>
-				<th>VI</th>
-				<th>VII</th>
-				<th>(I)</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-		</tbody>
-	</table>
+	<div id="table">
+		<table>
+			<thead>
+				<tr>
+					<th class="wichtig">I</th>
+					<th>II</th>
+					<th>III</th>
+					<th class="wichtig">IV</th>
+					<th class="wichtig">V</th>
+					<th>VI</th>
+					<th>VII</th>
+					<th>(I)</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="wichtig"></td>
+					<td></td>
+					<td></td>
+					<td class="wichtig"></td>
+					<td class="wichtig"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class="wichtig"></td>
+					<td></td>
+					<td></td>
+					<td class="wichtig"></td>
+					<td class="wichtig"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+			</tbody>
+		</table>
+		<table class="table2">
+			<thead><th>Dreiklang</th><th>Noten</th></thead>
+			<tbody>
+				<tr><td class="wichtig"></td><td class="wichtig"></td></tr>
+				<tr><td></td><td></td></tr>
+				<tr><td></td><td></td></tr>
+				<tr><td class="wichtig"></td><td class="wichtig"></td></tr>
+				<tr><td class="wichtig"></td><td class="wichtig"></td></tr>
+				<tr><td></td><td></td></tr>
+			</tbody>
+		</table>
+	</div>
 <script>
-(()=>{listnotes()})()
+(()=>{ document.getElementById("button-lösung").disabled =true;listnotes()})()
 function zufi() {
+    document.getElementById("button-lösung").disabled=false
     document.getElementById("table").style.display="none"
     let select = document.getElementById("note")
     let items = select.getElementsByTagName("option")
@@ -114,6 +139,7 @@ function zufi() {
     listnotes()
 }
 function lösung() {
+    document.getElementById("button-lösung").disabled=true
     document.getElementById("table").style.display=""
 }
 function listnotes() {
@@ -134,7 +160,7 @@ function listnotes() {
 
 	let result = []
 
-	let geschlecht = moll, index = 0, diff = 0, indexSave = 0, diffSave = 0, startSave = start
+	let geschlecht = moll, index = 0, diff = 0, indexSave = 0, diffSave = 0
 	if (gesch === "dur") {
 		geschlecht = dur
 	} else if (gesch === "moll") {
@@ -162,7 +188,7 @@ function listnotes() {
 	indexSave = index
 	diffSave = diff
 
-	result.push(startSave)
+	result.push("")
 
 	for (let i = 0; i < geschlecht.length; i++) {
 		diff += geschlecht[i] - getNoteLen(index)
@@ -184,10 +210,14 @@ function listnotes() {
 		}
 	}
 
-	index = indexSave
+    result[0] = result[7]
+
+	const drei = JSON.parse(JSON.stringify(result))
+
+    index = indexSave
 	diff = diffSave
 
-	result.push(startSave)
+	result.push("")
 
 	for (let i = 0; i < geschlecht.length; i++) {
 		diff += geschlecht[i] - getNoteLen(index)
@@ -219,12 +249,28 @@ function listnotes() {
 		result.push(resultTemp)
 	}
 
-    result = result.map(e => e === "h♭" ? "b" : e)
+    result[8] = result[15]
+
+	result.push("Tonika",getDreiklang(drei, 0))
+	result.push("Subdominantenparallele",getDreiklang(drei, 1))
+	result.push("Dominantenparallele",getDreiklang(drei, 2))
+	result.push("Subdominante",getDreiklang(drei, 3))
+	result.push("Dominante",getDreiklang(drei, 4))
+	result.push("Tonikaparallele",getDreiklang(drei, 5))
+
+    // result = result.map(e => e === "h♭" ? "b" : e)
+	result = result.map(e => e.replace("h♭", "b"))
+	result = result.map(e => e.replace("b♭", "h♭♭"))
 
 	let i = 0
-	Array.from(document.getElementsByTagName("TD")).forEach(tag => {
+	Array.from(document.getElementsByTagName("td")).forEach(tag => {
 		tag.textContent = result[i++]
 	})
+
+	function getDreiklang(quelle, n) {
+		return quelle[n % 7] + " " + quelle[(n + 2) % 7] + " " + quelle[(n + 4) % 7]
+	}
+
 	function getNoteName(index) {
 		return noten[index % 7][0]
 	}
