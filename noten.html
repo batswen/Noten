@@ -66,8 +66,14 @@
 		</select>
 		<select id="gesch" class="flex-1" onchange="listnotes()">
 			<option value="dur">Dur</option>
+			<option value="ionisch">Ionisch</option>
+			<option value="dorisch">Dorisch</option>
+			<option value="phrygisch">Phrygisch</option>
+			<option value="lydisch">Lydisch</option>
+			<option value="mixolydisch">Mixolydisch</option>
 			<option value="moll">Moll</option>
-			<!--<option value="chrom">Chrom</option>-->
+			<option value="äolisch">Äolisch</option>
+			<option value="lokrisch">Lokrisch</option>
 		</select>
 	</div>
     <div class="flex gap" style="width:50%;margin-left:auto;margin-right:auto;">
@@ -154,20 +160,22 @@ function listnotes() {
 		["a",2],
 		["h",1]
 	]
-	const dur = [2,2,1,2,2,2,1]
-	const moll = [2,1,2,2,1,2,2]
-	const chrom = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-
+    const tonarten = {
+        "dur":  [2,2,1,2,2,2,1],
+        "ionisch":  [2,2,1,2,2,2,1],
+        "dorisch": [2,1,2,2,2,1,2],
+        "phrygisch": [1,2,2,2,1,2,2],
+        "lydisch": [2,2,2,1,2,2,1],
+        "mixolydisch": [2,2,1,2,2,1,2],
+        "moll": [2,1,2,2,1,2,2],
+        "äolisch": [2,1,2,2,1,2,2],
+        "lokrisch": [1,2,2,1,2,2,2]
+    }
 	let result = []
 
-	let geschlecht = moll, index = 0, diff = 0, indexSave = 0, diffSave = 0
-	if (gesch === "dur") {
-		geschlecht = dur
-	} else if (gesch === "moll") {
-		geschlecht = moll
-	} else if (gesch === "chrom") {
-		geschlecht = chrom
-	}
+	let index = 0, diff = 0, indexSave = 0, diffSave = 0
+	
+    const geschlecht = tonarten[gesch]
 
 	if (start.substring(1,2) === "♯") {
 		diff = 1
